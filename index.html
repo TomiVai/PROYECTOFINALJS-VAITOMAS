@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Bienvenido a To Do List</h1>
+  <div id="usuario-container">
+    <label for="usuario">Nombre de usuario:</label>
+    <input type="text" id="usuario">
+    <button id="logueate">Iniciar sesión</button>
+    <button id="registrate">Registrarse</button>
+  </div>
+  <div id="todo-container">
+    <h2>Bienvenido, <span id="nombre-usuario"></span>!</h2>
+    <label for="tarea">Nueva tarea:</label>
+    <input type="text" id="tarea">
+    <button id="guardarNota">Agregar tarea</button>
+  </div>
+  <div id="notas-guardadas">
+    <h2>Notas Guardadas</h2>
+    <button id="mostrarNotas">Mostrar Notas Guardadas (vuelve a apretarlo para esconderlas)</button>
+    <button id="borrarNotas">Borrar Todas las Notas</button>
+    <ul id="verNotas"></ul>
+</div>
+  <div id="clima-container">
+    <h2>Clima actual:</h2>
+    <p id="clima-info"></p>
+  </div>  
+  <script src="main.js"></script>
+</body>
+</html>
