@@ -1,15 +1,3 @@
-// Consignas del proyecto final, en mi caso un to do list
-
-// Objetos y Arrays. Métodos de Arrays.
-// Funciones y condicionales.
-// Generación del DOM de forma dinámica. Eventos.
-// Sintaxis avanzada.
-// Al menos una librería de uso relevante para el proyecto.
-// Manejo de promesas con fetch. 
-// Carga de datos desde un JSON local o desde una API externa.
-
-// Del html necesito un input, un boton para guardar el mismo, puedo agregar una opcion para loguearse, cosa de que las notas de una persona no sean las mismas que del resto, lo cual tambien seria un input, luego, boton de guardado de notas y boton para que se muestren las notas previamente guardadas y un div que muestre nuestras notas guardadas, el mismo debe estar vacio y la idea es que se le inserten cosas desde js.
-
 let usuarioActual = null;
 
 // elementos del html
@@ -36,13 +24,24 @@ function mostrarElementosDespuesInicioSesion() {
 function usuarioExiste(nombreUsuario) {
     return localStorage.getItem(nombreUsuario) !== null;
 }
-// iniciar sesion con un usuario ya registrado y de lo contrario tirar alert con error avisando
+
+// SweetAlert2 con función personalizada
+function mostrarAlert(mensaje, tipo) {
+    Swal.fire({
+        title: tipo === 'error' ? 'Error' : 'Éxito',
+        text: mensaje,
+        icon: tipo,
+        confirmButtonText: 'Aceptar'
+    });
+}
+
+// iniciar sesion con un usuario ya registrado y de lo contrario mostrar SweetAlert2 con un error avisando
 function iniciarSesion() {
     const entradaUsuario = document.getElementById('usuario');
     const nombreUsuario = entradaUsuario.value.trim();
 
     if (nombreUsuario === '') {
-        alert('Por favor, ingresa un nombre de usuario válido.');
+        mostrarAlert('Por favor, ingresa un nombre de usuario válido.', 'error');
         return;
     }
 
@@ -52,7 +51,7 @@ function iniciarSesion() {
         mostrarNotas();
         mostrarElementosDespuesInicioSesion();
     } else {
-        alert('El usuario no existe. Intenta registrarte.');
+        mostrarAlert('El usuario no existe. Intenta registrarte.', 'error');
     }
 }
 
@@ -65,7 +64,8 @@ function ocultarFormularioInicio() {
     formularioInicio.style.display = 'none';
     document.getElementById('todo-container').style.display = 'block';
 }
-// registrar usuario en caso de no tener uno y confirmar exito con alert
+
+// registrar usuario en caso de no tener uno y confirmar exito con SweetAlert2
 function registrarUsuario() {
     formularioInicio.innerHTML = `<input type="text" placeholder="escribi tu nombre de usuario" id="nuevoUsuario"></br>
         <button type="submit" id="guardarUsuario">Crea tu usuario</button>`;
@@ -76,12 +76,12 @@ function registrarUsuario() {
         let nombreUsuario = entradaUsuario.value;
 
         if (nombreUsuario === '') {
-            alert('Por favor, ingresa un nombre de usuario válido.');
+            mostrarAlert('Por favor, ingresa un nombre de usuario válido.', 'error');
             return;
         }
 
         if (usuarioExiste(nombreUsuario)) {
-            alert('El usuario ya existe. Intenta iniciar sesión.');
+            mostrarAlert('El usuario ya existe. Intenta iniciar sesión.', 'error');
         } else {
             usuarioActual = nombreUsuario;
 
@@ -92,19 +92,22 @@ function registrarUsuario() {
 
             tituloUsuario.innerText = usuarioActual || '';
 
-            alert('¡Registro exitoso! Ahora inicia sesión con el usuario registrado.');
-
+            // Aquí iniciamos sesión después del registro exitoso
             iniciarSesion();
+
+            // Y ahora mostramos la alerta de registro exitoso
+            mostrarAlert('¡Registro exitoso! Ahora inicia sesión con el usuario registrado.', 'success');
         }
     });
 }
+
 // almacenar notas por usuarios
 function agregarTarea() {
     const entradaTarea = document.getElementById('tarea');
     const tarea = entradaTarea.value.trim();
 
     if (tarea === '') {
-        alert('Por favor, ingresa una tarea válida.');
+        mostrarAlert('Por favor, ingresa una tarea válida.', 'error');
         return;
     }
 
@@ -136,16 +139,25 @@ function toggleNotasGuardadas() {
     listaNotas.style.display = listaNotas.style.display === 'none' ? 'block' : 'none';
 }
 
-botonBorrarNotas.addEventListener('click', borrarTodasLasNotas);
+// SweetAlert2 en lugar de confirm
+botonBorrarNotas.addEventListener('click', () => {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: '¿Estás seguro de que deseas borrar todas las notas? Esta acción no se puede deshacer.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, borrar todo'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            localStorage.removeItem(usuarioActual);
+            mostrarNotas();
+            mostrarAlert('Todas las notas han sido borradas.', 'success');
+        }
+    });
+});
 
-function borrarTodasLasNotas() {
-    const confirmacion = confirm('¿Estás seguro de que deseas borrar todas las notas? Esta acción no se puede deshacer.');
-
-    if (confirmacion) {
-        localStorage.removeItem(usuarioActual);
-        mostrarNotas();
-    }
-}
 // api del clima, muestra el clima actual y la temperatura segun el momento en el que el usuario esta escribiendo la nota, por si le influye en algo
 function obtenerClima() {
     const apiKey = 'e13e42a3f13c04fdd16f5c4100927131';
@@ -164,5 +176,3 @@ function obtenerClima() {
 }
 
 obtenerClima();
-
-
